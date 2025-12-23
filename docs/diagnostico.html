@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IRAVListo — Diagnóstico</title></head>
+<body style="font-family:system-ui,Arial;padding:18px;line-height:1.5">
+<h1>Diagnóstico IRAVListo</h1>
+<p>Worker: <code>https://iravlisto-pay.xqwertyx.workers.dev</code></p>
+<button id="test" style="padding:10px 14px">Probar create-checkout</button>
+<pre id="out" style="white-space:pre-wrap;background:#f3f4f6;padding:12px;border-radius:10px"></pre>
+<script>
+const WORKER_BASE = "https://iravlisto-pay.xqwertyx.workers.dev";
+document.getElementById("test").onclick = async () => {
+  const out = document.getElementById("out");
+  out.textContent = "Enviando POST...";
+  try {
+    const res = await fetch(`${WORKER_BASE}/create-checkout`, {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({})
+    });
+    const txt = await res.text();
+    out.textContent = `HTTP ${res.status}\n${txt}`;
+  } catch(e) {
+    out.textContent = "Error: " + e;
+  }
+};
+</script>
+</body></html>
