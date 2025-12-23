@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>IRAVListo — Pago confirmado</title>
+</head>
+<body style="font-family:system-ui,Arial;padding:24px;max-width:720px;margin:0 auto;line-height:1.5">
+  <h1>Pago confirmado</h1>
+  <p>Verificando el pago…</p>
+
+  <script>
+    const WORKER_BASE = "https://iravlisto-pay.xqwertyx.workers.dev";
+    const RETURN_URL = "https://xqwertyx-ai.github.io/iravlisto/#calc";
+
+    const qs = new URLSearchParams(location.search);
+    const session_id = qs.get("session_id");
+
+    async function run() {
+      if (!session_id) {
+        document.body.innerHTML += "<p><strong>Error:</strong> falta <code>session_id</code> en la URL.</p>";
+        return;
+      }
+
+      try {
+        const res = await fetch(`${WORKER_BASE}/verify-session`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ session_id })
+        });
+        const data = await res.json().catch(() => ({}));
+
+        if (data.ok) {
+          localStorage.setItem("iravlisto_unlocked", "1");
+          location.href = RETURN_URL;
+        } else {
+          document.body.innerHTML += "<p><strong>No se pudo verificar el pago.</strong> Si acabas de pagar, espera 10–20 segundos y recarga. Si persiste, contacta soporte.</p>";
+        }
+      } catch (e) {
+        document.body.innerHTML += "<p><strong>Error de red al verificar.</strong> Revisa la URL del Worker/CORS.</p>";
+      }
+    }
+
+    run();
+  </script>
+</body>
+</html>
