@@ -2,7 +2,7 @@
 #!/usr/bin/env python3
 
 """
-Descarga el CSV oficial del INE para la tabla 72975 (IRAV) y genera public_free/irav_data.json
+Descarga el CSV oficial del INE para la tabla 72975 (IRAV) y genera docs/irav_data.json
 Uso:
   python scripts/update_irav_data.py
 
@@ -20,7 +20,7 @@ from pathlib import Path
 CSV_URL = "https://www.ine.es/jaxiT3/files/t/csv_bd/72975.csv"
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "public_free" / "irav_data.json"
+OUT = ROOT / "docs" / "irav_data.json"
 
 def fetch_csv(url: str) -> str:
     with urllib.request.urlopen(url) as r:
