@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IRAVListo — Calculadora IRAV y notificación en PDF/Word</title>
+  <meta name="description" content="Calcula la actualización anual del alquiler con IRAV y genera una notificación formal en PDF/Word en minutos." />
+  <link rel="stylesheet" href="./styles.css?v=2025-12-24-2" />
+</head>
+<body>
+  <div class="container">
+    <div class="nav">
+      <div class="brand">
+        <a href="./" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:10px">
+          <span style="display:inline-flex;width:34px;height:34px;border-radius:12px;background:var(--primary);align-items:center;justify-content:center;color:#fff;font-weight:900;">IR</span>
+          <span>IRAVListo</span>
+        </a>
+        <span class="badge">Cálculo gratis · Documento en PDF/Word</span>
+      </div>
+      <div class="nav-cta">
+        <a class="btn small" href="#pricing">Precios</a>
+        <a class="btn primary small" href="#calc">Calcular</a>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="hero-simple">
+        <h1 class="h1">Calcula la actualización de renta (IRAV) y genera la notificación lista para enviar</h1>
+        <p class="sub">Cálculo gratuito. Si necesitas el documento, lo descargas en PDF o Word tras el pago (sin registros).</p>
+        <div class="hero-actions">
+          <a class="btn primary" href="#calc">Calcular ahora</a>
+          <a class="btn" href="#pricing">Ver precios</a>
+        </div>
+        <div class="kicker">
+          <span>Propietarios</span><span>Agencias</span><span>Inquilinos</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="calc">
+      <h2>Calculadora IRAV</h2>
+      <p class="lead">Cálculo gratuito. Completa lo imprescindible. El resto es opcional para generar el documento.</p>
+
+      <div class="split">
+        <div class="card">
+          <form class="form" id="calcForm">
+            <div class="field">
+              <label for="rent">Renta mensual actual (€)</label>
+              <input id="rent" name="rent" inputmode="decimal" placeholder="Ej. 950" required />
+            </div>
+
+            <div class="field">
+              <label for="period">Mes IRAV a aplicar</label>
+              <select id="period" name="period"></select>
+              <p class="mini" id="periodHelp" style="margin:6px 0 0; opacity:.85"></p>
+            </div>
+
+            <div class="field full" style="margin-top:2px">
+              <label>
+                <input type="checkbox" id="manualIravToggle" />
+                Introducir IRAV manualmente (si el mes no tiene dato o no carga)
+              </label>
+            </div>
+
+            <div class="field">
+              <label for="manualIrav">IRAV manual (%)</label>
+              <input id="manualIrav" name="manualIrav" inputmode="decimal" placeholder="Ej. 2,29" />
+            </div>
+
+            <div class="field">
+              <label for="effectiveDate">Fecha de efecto (opcional)</label>
+              <input id="effectiveDate" name="effectiveDate" type="date" />
+            </div>
+
+            <div class="field">
+              <label for="contractDate">Fecha de contrato (opcional)</label>
+              <input id="contractDate" name="contractDate" type="date" />
+            </div>
+
+            <div class="field">
+              <label for="tenantName">Nombre arrendatario (opcional)</label>
+              <input id="tenantName" name="tenantName" placeholder="Ej. Ana Pérez" />
+            </div>
+
+            <div class="field">
+              <label for="landlordName">Nombre arrendador (opcional)</label>
+              <input id="landlordName" name="landlordName" placeholder="Ej. Juan García" />
+            </div>
+
+            <div class="field full">
+              <label for="address">Dirección del inmueble (opcional)</label>
+              <input id="address" name="address" placeholder="Ej. C/ Example 12, Barcelona" />
+            </div>
+
+            <div class="field full">
+              <label for="extra">Observaciones (opcional)</label>
+              <textarea id="extra" name="extra" placeholder="Ej. Forma de pago, recordatorio de cuenta, etc."></textarea>
+            </div>
+
+            <div class="field full" style="margin-top:4px">
+              <button class="btn primary" type="submit">Calcular</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-top:0">Qué incluye el documento</h3>
+          <ul class="bullets">
+            <li>Periodo IRAV, porcentaje aplicado e importes (antes/después).</li>
+            <li>Fecha de contrato (si la indicas) y fecha de efecto.</li>
+            <li>Campos opcionales: partes, dirección y observaciones.</li>
+          </ul>
+          <div class="hr"></div>
+          <div class="notice">
+            Consejo: usa siempre el mismo formato de comunicación para mantener consistencia documental.
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="resultsCard" style="margin-top:18px">
+        <h2 style="margin:0 0 10px; color:var(--primary)">Resultado</h2>
+
+        <div class="result">
+          <div class="row"><span>IRAV aplicado</span><strong id="outIrav">—</strong></div>
+          <div class="row"><span>Renta anterior</span><strong id="outOld">—</strong></div>
+          <div class="row"><span>Renta actualizada</span><strong id="outNew">—</strong></div>
+          <div class="row"><span>Diferencia</span><strong id="outDelta">—</strong></div>
+          <div class="row"><span>Periodo</span><strong id="outMonth">—</strong></div>
+        </div>
+
+        <div class="hr"></div>
+        <div id="status" class="notice">Introduce los datos y pulsa “Calcular”.</div>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px">
+          <button class="btn primary" id="btnPdf" type="button">Descargar PDF</button>
+          <button class="btn" id="btnDocx" type="button">Descargar Word</button>
+        </div>
+
+        <p class="mini" style="margin-top:10px">
+          Para descargar el documento, realiza el pago y se desbloqueará en este dispositivo.
+          Consulta <a href="./terminos.html">Términos</a> y <a href="./reembolsos.html">Reembolsos</a>.
+        </p>
+      </div>
+    </div>
+
+    <div class="section" id="pricing">
+      <h2>Precios</h2>
+      <p class="lead">Cálculo gratuito. Paga solo si necesitas el documento.</p>
+
+      <div class="pricing">
+        <div class="price">
+          <div class="name">Gratis</div>
+          <div class="amt">0 €</div>
+          <p class="meta">Cálculo en pantalla</p>
+          <ul>
+            <li>Resultado inmediato</li>
+            <li>Sin registro</li>
+            <li>Modo manual si falta dato</li>
+          </ul>
+          <div class="cta"><a class="btn primary" href="#calc">Calcular</a></div>
+        </div>
+
+        <div class="price">
+          <div class="name">Documento</div>
+          <div class="amt">9 €</div>
+          <p class="meta">1 descarga (PDF + Word)</p>
+          <ul>
+            <li>Notificación formal</li>
+            <li>Word editable</li>
+            <li>Desbloqueo tras el pago</li>
+          </ul>
+          <div class="cta">
+            <button class="btn primary" data-plan="one" type="button">Comprar 9 €</button>
+          </div>
+        </div>
+
+        <div class="price">
+          <div class="name">Pro anual</div>
+          <div class="amt">49 €</div>
+          <p class="meta">Suscripción anual</p>
+          <ul>
+            <li>Descargas ilimitadas (12 meses)</li>
+            <li>Renovación anual automática</li>
+            <li>Cancelación en cualquier momento</li>
+          </ul>
+          <div class="cta">
+            <button class="btn green" data-plan="annual" type="button">Comprar 49 €/año</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="hr"></div>
+      <p class="mini">
+        © 2025 [[TITULAR]] · <a href="./aviso-legal.html">Aviso legal</a> ·
+        <a href="./privacidad.html">Privacidad</a> ·
+        <a href="./terminos.html">Términos</a> ·
+        <a href="./reembolsos.html">Reembolsos</a> ·
+        <a href="./cookies.html">Cookies</a> ·
+        <a href="./accesibilidad.html">Accesibilidad</a>
+      </p>
+      <p class="mini">Soporte: <a href="mailto:contacto@iravlisto.com">contacto@iravlisto.com</a></p>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js"></script>
+
+  <script>window.__PRO_MODE__ = false;</script>
+  <script src="./app.js?v=2025-12-24-2" defer></script>
+</body>
+</html>
